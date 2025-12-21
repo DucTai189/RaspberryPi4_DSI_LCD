@@ -15,7 +15,6 @@ int main(void)
     int touch_x = 0, touch_y = 0;
     bool led_state = 0;
     Rect_st btn_rect;
-    uint32_t count =0;
 
     
     if (init_framebuffer(&fb) < 0) 
@@ -93,32 +92,20 @@ int main(void)
                     break;
                 // Handing the touch event after completing touch event    
                 case EV_KEY:
-
-                    printf("ev.type %d\n", ev.type);
-                    printf("ev.code %d\n", ev.code);
-                                     printf("touch_x %d\n", touch_x);
-                    printf("touch_x %d\n", touch_y);   
+  
 
                     if (ev.code == BTN_TOUCH) 
                     {
-                        printf("ev.value %d (0=release, 1=press)\n", ev.value);
                         
                         // Only process on RELEASE (ev.value == 0) after coordinates are captured
                         if (ev.value == 0 && (touch_x != 0 || touch_y != 0)) 
-                        {
-                            printf("Touch coords: x=%d, y=%d\n", touch_x, touch_y);
-                            printf("Button bounds: x=%d-%d, y=%d-%d\n", 
-                                   btn_rect.x, btn_rect.x + btn_rect.width,
-                                   btn_rect.y, btn_rect.y + btn_rect.height);
-                            
+                        {                    
                             // Check if touch is within button bounds
                             if ((touch_x >= btn_rect.x) && 
                                 (touch_x <= btn_rect.x + btn_rect.width) &&
                                 (touch_y >= btn_rect.y) && 
                                 (touch_y <= btn_rect.y + btn_rect.height)) 
-                                {
-                                    printf("touch_ON_x %d\n", touch_x);
-                                    printf("touch_ON_y %d\n", touch_y);                   
+                                {            
 
                                     // Update last touch time   
                                     led_state = led_state ^ 1;
@@ -150,11 +137,10 @@ int main(void)
                                         draw_image(&fb, &button_img, &btn_rect);
                                     }
                                     
-                                    printf("LED toggled successfully\n");
                                 }
                                 else
                                 {
-                                    printf("Touch OUTSIDE button area - ignored\n");
+
                                 }
                             
                             // Reset coordinates after processing
