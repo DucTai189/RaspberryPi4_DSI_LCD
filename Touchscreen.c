@@ -47,11 +47,12 @@ int init_framebuffer(Framebuffer *fb)
 int load_image(const char *filename, Image *img) 
 {
     img->pixels = stbi_load(filename, &img->width, &img->height, &img->channels, 4);
-    if (!img->pixels) {
+    if (!img->pixels) 
+    {
         fprintf(stderr, "Failed to load %s: %s\n", filename, stbi_failure_reason());
         return -1;
     }
-    printf("Loaded image: %dx%d, %d channels\n", img->width, img->height, img->channels);
+   // printf("Loaded image: %dx%d, %d channels\n", img->width, img->height, img->channels);
     return 0;
 }
 

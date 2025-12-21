@@ -6,7 +6,8 @@
 
 
 
-int main(void) {
+int main(void) 
+{
     Framebuffer fb;
     Image button_img;
     uint8_t return_value ;
@@ -57,10 +58,10 @@ int main(void) {
     draw_image(&fb, &button_img, &btn_rect);
     
     
-    int touch_fd = open(TOUCH_DEVICE, O_RDONLY | O_NONBLOCK);
+    int touch_fd = open(TOUCH_DEVICE, O_RDONLY);
     if (touch_fd < 0) 
     {
-        touch_fd = open("/dev/input/touchscreen", O_RDONLY | O_NONBLOCK);
+        touch_fd = open("/dev/input/touchscreen", O_RDONLY);
         if (touch_fd < 0) 
         {
             perror("Cannot open touch device");
@@ -70,20 +71,20 @@ int main(void) {
         }
     }
 
-    
     while (1) 
     {
-        while (read(touch_fd, &ev, sizeof(ev)) == sizeof(ev)) 
+        // Blocking read - waits for touch event
+        if (read(touch_fd, &ev, sizeof(ev)) == sizeof(ev)) 
         {
-            count++;
-            printf ("count = %d\n", count);
+
             switch (ev.type) 
             {
-                // Detect the touch position when touch event is happenning
+                
+                // Detect the touch position when touch event is happening
                 case EV_ABS:
                     if (ev.code == ABS_X) 
                     {
-                        touch_x = ev.value ;
+                        touch_x = ev.value;
                     } 
                     else if (ev.code == ABS_Y)
                     {
@@ -92,18 +93,33 @@ int main(void) {
                     break;
                 // Handing the touch event after completing touch event    
                 case EV_KEY:
+
+                    printf("ev.type %d\n", ev.type);
+                    printf("ev.code %d\n", ev.code);
+                                     printf("touch_x %d\n", touch_x);
+                    printf("touch_x %d\n", touch_y);   
+
                     if (ev.code == BTN_TOUCH) 
                     {
-                        printf("ev.value %d\n", ev.value);
-
-                        if (ev.value == 1) 
+                        printf("ev.value %d (0=release, 1=press)\n", ev.value);
+                        
+                        // Only process on RELEASE (ev.value == 0) after coordinates are captured
+                        if (ev.value == 0 && (touch_x != 0 || touch_y != 0)) 
                         {
-                            // Get current time for debouncing
-                            if( ((btn_rect.x <= touch_x) &&  
-                                (touch_x <=btn_rect.x + button_img.width +10)) &&
-                                ((btn_rect.y <=touch_y) &&
-                                ( touch_y <= btn_rect.y + button_img.height +10))) 
+                            printf("Touch coords: x=%d, y=%d\n", touch_x, touch_y);
+                            printf("Button bounds: x=%d-%d, y=%d-%d\n", 
+                                   btn_rect.x, btn_rect.x + btn_rect.width,
+                                   btn_rect.y, btn_rect.y + btn_rect.height);
+                            
+                            // Check if touch is within button bounds
+                            if ((touch_x >= btn_rect.x) && 
+                                (touch_x <= btn_rect.x + btn_rect.width) &&
+                                (touch_y >= btn_rect.y) && 
+                                (touch_y <= btn_rect.y + btn_rect.height)) 
                                 {
+                                    printf("touch_ON_x %d\n", touch_x);
+                                    printf("touch_ON_y %d\n", touch_y);                   
+
                                     // Update last touch time   
                                     led_state = led_state ^ 1;
                                     gpiod_line_set_value(line_GPIO13, led_state);
@@ -133,17 +149,28 @@ int main(void) {
                                         btn_rect.y = (fb.height - btn_rect.height) / 2;
                                         draw_image(&fb, &button_img, &btn_rect);
                                     }
-                                    touch_x =0;
-                                    touch_y =0;
+                                    
+                                    printf("LED toggled successfully\n");
                                 }
+                                else
+                                {
+                                    printf("Touch OUTSIDE button area - ignored\n");
+                                }
+                            
+                            // Reset coordinates after processing
+                            touch_x = 0;
+                            touch_y = 0;
                             
                             
                         } 
                     }
+                    else
+                    {
+                        printf("ev.code %d\n", ev.code);
+                    }
                     break;
             }
         }
-        
     }
     
     close(touch_fd);
