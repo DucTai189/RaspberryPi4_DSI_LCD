@@ -130,14 +130,12 @@ void draw_image(Framebuffer *fb, Image *img, Rect_st *rect)
 }
 
 
-void draw_string(Framebuffer *fb, uint16_t x, uint16_t y, const unsigned char *str, Enum_FontSize FontSize) 
+void draw_string(Framebuffer *fb, Rect_st *rect, const unsigned char *str, Enum_FontSize FontSize) 
 {
-    Rect_st rect;  
+
     FontSize_st size;
     uint8_t jump_step = 0;
 
-    rect.x = x;
-    rect.y = y;
 
     switch (FontSize)
     {
@@ -164,10 +162,10 @@ void draw_string(Framebuffer *fb, uint16_t x, uint16_t y, const unsigned char *s
 
     while(*str != '\0')
     {       
-        if((rect.x < fb->width) && (rect.y < fb->height))
+        if((rect->x < fb->width) && (rect->y < fb->height))
         {
-            draw_char(fb, *str, &rect, size); 
-            rect.x += jump_step;  // Increased spacing for row font
+            draw_char(fb, *str, rect, size); 
+            rect->x += jump_step;  // Increased spacing for row font
             str++;
         }
         else

@@ -15,7 +15,9 @@ int main(void)
     int touch_x = 0, touch_y = 0;
     bool led_state = 0;
     Rect_st btn_rect;
+    Rect_st text_rect = {0, 0, 0, 0};
 
+    const unsigned char str[]="Turn on/off the LED by touching the button" ;
     
     if (init_framebuffer(&fb) < 0) 
     {
@@ -41,9 +43,13 @@ int main(void)
         close(fb.fd);
         return 1;
     }
-    
-    
 
+    clear_screen(&fb, 0x000000); // Clear screen to black
+
+    // Draw the position of string on the screen
+    text_rect.x = 120 ;
+    text_rect.y = 0 ;
+    draw_string(&fb, &text_rect, str, FontSize_2012); 
     //Increase the size of image
     btn_rect.width = button_img.width + 30 ;
     //Increase the size of image
@@ -52,7 +58,7 @@ int main(void)
     btn_rect.x = (fb.width - btn_rect.width) / 2;
     btn_rect.y = (fb.height - btn_rect.height) / 2;
     
-    clear_screen(&fb, 0x000000);
+
 
     draw_image(&fb, &button_img, &btn_rect);
     
@@ -69,9 +75,11 @@ int main(void)
             return 1;
         }
     }
-    const unsigned char str[]="Turn on/off the LED by touching the button" ;
 
-    draw_string(&fb,0,0, str, FontSize_2012) ;
+
+
+
+
     while (1) 
     {
         // Blocking read - waits for touch event

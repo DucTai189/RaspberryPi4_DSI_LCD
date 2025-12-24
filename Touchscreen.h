@@ -54,7 +54,7 @@ int init_framebuffer(Framebuffer *fb) ;
 int load_image(const char *filename, Image *img) ;
 void clear_screen(Framebuffer *fb, unsigned int color) ;
 void draw_image(Framebuffer *fb, Image *img, Rect_st *rect) ;
-void draw_string(Framebuffer *fb, uint16_t x, uint16_t y, const unsigned char *str, Enum_FontSize FontSize)   ;
+void draw_string(Framebuffer *fb, Rect_st *rect, const unsigned char *str, Enum_FontSize FontSize);
 void draw_char(Framebuffer *fb, unsigned char str, Rect_st *rect  ,FontSize_st size)  ;
 
 #endif
