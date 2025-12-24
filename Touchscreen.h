@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+
 #define FB_DEVICE "/dev/fb0"
 
 #define TOUCH_DEVICE "/dev/input/event0"
@@ -36,9 +37,24 @@ typedef struct
     uint16_t height ; // height  of objective  
 } Rect_st;
 
+// Define the font size such as 1608
+typedef struct
+{
+    uint8_t height ; // height  of font
+    uint8_t width ;  // width  of font
+}FontSize_st;
+
+typedef enum
+{
+    FontSize_1608 = 1,
+    FontSize_2012 = 2
+}Enum_FontSize;
+
 int init_framebuffer(Framebuffer *fb) ;
 int load_image(const char *filename, Image *img) ;
 void clear_screen(Framebuffer *fb, unsigned int color) ;
 void draw_image(Framebuffer *fb, Image *img, Rect_st *rect) ;
+void draw_string(Framebuffer *fb, uint16_t x, uint16_t y, const unsigned char *str, Enum_FontSize FontSize)   ;
+void draw_char(Framebuffer *fb, unsigned char str, Rect_st *rect  ,FontSize_st size)  ;
 
 #endif

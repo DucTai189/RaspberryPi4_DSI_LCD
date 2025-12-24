@@ -69,7 +69,9 @@ int main(void)
             return 1;
         }
     }
+    const unsigned char str[]="Turn on/off the LED by touching the button" ;
 
+    draw_string(&fb,0,0, str, FontSize_2012) ;
     while (1) 
     {
         // Blocking read - waits for touch event
@@ -89,6 +91,7 @@ int main(void)
                     {
                         touch_y = ev.value;
                     }
+                  //  flag_touched = 1 ;
                     break;
                 // Handing the touch event after completing touch event    
                 case EV_KEY:
@@ -96,63 +99,58 @@ int main(void)
 
                     if (ev.code == BTN_TOUCH) 
                     {
-                        
-                        // Only process on RELEASE (ev.value == 0) after coordinates are captured
-                        if (ev.value == 0 && (touch_x != 0 || touch_y != 0)) 
-                        {                    
-                            // Check if touch is within button bounds
-                            if ((touch_x >= btn_rect.x) && 
-                                (touch_x <= btn_rect.x + btn_rect.width) &&
-                                (touch_y >= btn_rect.y) && 
-                                (touch_y <= btn_rect.y + btn_rect.height)) 
-                                {            
+                                          
+                        // Check if touch is within button bounds
+                        if ((touch_x >= btn_rect.x) && 
+                            (touch_x <= btn_rect.x + btn_rect.width) &&
+                            (touch_y >= btn_rect.y) && 
+                            (touch_y <= btn_rect.y + btn_rect.height)) 
+                            {            
 
-                                    // Update last touch time   
-                                    led_state = led_state ^ 1;
-                                    gpiod_line_set_value(line_GPIO13, led_state);
-                                    if (led_state == 1)
-                                    {
-            
-                                        load_image(BUTTON_ON_IMAGE, &button_img) ;
-                                            //Increase the size of image
-                                        btn_rect.width = button_img.width + 30 ;
-                                            //Increase the size of image
-                                        btn_rect.height = button_img.height + 30;
-                                        //Add the image in the center
-                                        btn_rect.x = (fb.width - btn_rect.width) / 2;
-                                        btn_rect.y = (fb.height - btn_rect.height) / 2;
-                                        draw_image(&fb, &button_img, &btn_rect);
-                                    }
-                                    else
-                                    {
-
-                                        load_image(BUTTON_IMAGE, &button_img) ;
+                                // Update last touch time   
+                                led_state = led_state ^ 1;
+                                gpiod_line_set_value(line_GPIO13, led_state);
+                                if (led_state == 1)
+                                {
+        
+                                    load_image(BUTTON_ON_IMAGE, &button_img) ;
                                         //Increase the size of image
-                                        btn_rect.width = button_img.width + 30 ;
+                                    btn_rect.width = button_img.width + 30 ;
                                         //Increase the size of image
-                                        btn_rect.height = button_img.height + 30;
-                                        //Add the image in the center
-                                        btn_rect.x = (fb.width - btn_rect.width) / 2;
-                                        btn_rect.y = (fb.height - btn_rect.height) / 2;
-                                        draw_image(&fb, &button_img, &btn_rect);
-                                    }
-                                    
+                                    btn_rect.height = button_img.height + 30;
+                                    //Add the image in the center
+                                    btn_rect.x = (fb.width - btn_rect.width) / 2;
+                                    btn_rect.y = (fb.height - btn_rect.height) / 2;
+                                    draw_image(&fb, &button_img, &btn_rect);
                                 }
                                 else
                                 {
 
+                                    load_image(BUTTON_IMAGE, &button_img) ;
+                                    //Increase the size of image
+                                    btn_rect.width = button_img.width + 30 ;
+                                    //Increase the size of image
+                                    btn_rect.height = button_img.height + 30;
+                                    //Add the image in the center
+                                    btn_rect.x = (fb.width - btn_rect.width) / 2;
+                                    btn_rect.y = (fb.height - btn_rect.height) / 2;
+                                    draw_image(&fb, &button_img, &btn_rect);
                                 }
-                            
-                            // Reset coordinates after processing
-                            touch_x = 0;
-                            touch_y = 0;
-                            
-                            
-                        } 
+                                
+                            }
+                            else
+                            {
+
+                            }
+                        
+                        // Reset coordinates after processing
+                        touch_x = 0;
+                        touch_y = 0;                                                 
+                        
                     }
                     else
                     {
-                        printf("ev.code %d\n", ev.code);
+                        //Do nothing
                     }
                     break;
             }
