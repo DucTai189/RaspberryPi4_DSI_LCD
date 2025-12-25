@@ -18,7 +18,9 @@
 extern struct gpiod_line *line_GPIO16;
 extern struct gpiod_line *line_GPIO13;
 extern struct gpiod_line *line_GPIO20;
+extern struct gpiod_chip *gpio_chip;
 
 __uint8_t Init_GPIO();
+void Cleanup_GPIO();
 
 #endif // GPIO_INIT_H    
